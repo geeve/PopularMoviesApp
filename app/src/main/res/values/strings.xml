@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">PopularMoviesApp</string>
+    <string name="sort_popular_tips">Movie sort by Popular!</string>
+    <string name="sort_rate_tips">Movie sort by Top Rate!</string>
+    <string name="movie_detail_title">Movie Detail</string>
+    <string name="network_error">NetWork Error!</string>
+    <string name="release_data">Release Data</string>
+    <string name="vote_rate">Vote Rate</string>
+    <string name="_10">/10</string>
+    <string name="overview">OverView</string>
+</resources>
