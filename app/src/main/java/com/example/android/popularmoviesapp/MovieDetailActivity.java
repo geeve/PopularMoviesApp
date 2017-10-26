@@ -1,64 +1,84 @@
 package com.example.android.popularmoviesapp;
 
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import android.content.Intent;
+
+import android.support.v4.app.FragmentManager;
+
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.ActionProvider;
 
-import com.squareup.picasso.Picasso;
+import android.util.Log;
+import android.view.Menu;
 
-import org.w3c.dom.Text;
+import android.widget.ShareActionProvider;
 
-public class MovieDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Movie>{
+
+import com.example.android.popularmoviesapp.utilities.NetWorkUtils;
+import com.example.android.popularmoviesapp.utilities.OpenMovieJsonUtils;
+
+
+
+
+public class MovieDetailActivity extends AppCompatActivity{
 
     private String mMovieId;
 
-    private TextView tvMovieName;
-
-    private ImageView ivMoviePoster;
-
-    private TextView tvMovieDate;
-
-    private TextView tvMovieVote;
-
-    private TextView tvMovieOverview;
-
     private String mUrl;
 
-    private Movie mMovie;
+    private MoviePrimaryInforFragment mMoviePrimaryInforFragment;
+
+    private MovieReviewsFragment mMovieReviewsFragment;
+
+    private ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
 
-        setTitle(getString(R.string.movie_detail_title));
         getIntentParam();
-        initView();
 
-        getSupportLoaderManager().initLoader(2,null,this).forceLoad();
+        initView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     private void initView(){
-        tvMovieDate = (TextView)findViewById(R.id.detail_date);
-        tvMovieName = (TextView) findViewById(R.id.tv_movie_name);
-        tvMovieOverview = (TextView) findViewById(R.id.detail_movie_overview);
-        tvMovieVote = (TextView)findViewById(R.id.detail_vote_averge);
-        ivMoviePoster = (ImageView) findViewById(R.id.detail_movie_poster);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        mMoviePrimaryInforFragment = MoviePrimaryInforFragment.newInstance(mUrl);
+
+        fragmentManager.beginTransaction()
+                .add(R.id.fragment_primary,mMoviePrimaryInforFragment)
+                .commit();
+
+        String url = NetWorkUtils.BASE_REQUEST_URL + "/" + mMovieId + "/reviews" + "?" +NetWorkUtils.API_KEY_PARM + "="+NetWorkUtils.API_KEY_VALUE;
+        mMovieReviewsFragment = MovieReviewsFragment.newInstance(url);
+        fragmentManager.beginTransaction()
+                .add(R.id.frgment_reviews,mMovieReviewsFragment)
+                .commit();
     }
 
-    private void setViews(Movie movie){
-        tvMovieName.setText(movie.getmMovieName());
-        tvMovieVote.setText(movie.getmMovieVote());
-        tvMovieOverview.setText(movie.getmOverView());
-        tvMovieDate.setText(movie.getmMovieDate());
-        Picasso.with(this).load(movie.getmMoviePoster()).into(ivMoviePoster);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_share,menu);
+//        mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.menu_item_share).getActionProvider();
+//        mShareActionProvider.setShareIntent(getShareIntent());
+//        mShareActionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+        return true;
     }
-
-
+    private Intent getShareIntent(){
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT,mUrl);
+        intent.setType("text/plain");
+        return intent;
+    }
     /**
      * 获得Intent中传过来的参数
      */
@@ -70,26 +90,10 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
             return;
         }
 
-        mMovieId = bundle.getString(Contract.JsonKey.movieId);
-
-        mUrl = Contract.BASE_REQUEST_URL + "/" + mMovieId +"?" +Contract.API_KEY_PARM + "="+Contract.API_KEY_VALUE;
+        mMovieId = bundle.getString(OpenMovieJsonUtils.JSON_ID);
+        Log.v("res MovieId",mMovieId);
+        mUrl = NetWorkUtils.BASE_REQUEST_URL + "/" + mMovieId +"?" +NetWorkUtils.API_KEY_PARM + "="+NetWorkUtils.API_KEY_VALUE;
+        Log.v("movie_path",mUrl);
     }
 
-    @Override
-    public Loader<Movie> onCreateLoader(int id, Bundle args) {
-
-        return new MovieDetailAsyncTaskLoader(this,mUrl);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Movie> loader, Movie data) {
-        mMovie = data;
-        setViews(mMovie);
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Movie> loader) {
-        mMovie = null;
-    }
 }

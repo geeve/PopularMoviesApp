@@ -10,7 +10,7 @@ public class Contract {
     public static final String BASE_REQUEST_URL="https://api.themoviedb.org/3/movie";
 
     //The movieDb API KEY,You must use your key!
-    public static final String API_KEY_VALUE = "";
+    public static final String API_KEY_VALUE = "e7c9406aaf1b4404ff405ad51f971cba";
 
     public static final String API_KEY_PARM = "api_key";
 

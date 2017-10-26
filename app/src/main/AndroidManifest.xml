@@ -20,6 +20,13 @@
         </activity>
         <activity android:name=".MovieDetailActivity"
             android:parentActivityName=".MainActivity"></activity>
+        <provider
+            android:authorities="com.example.android.popularmoviesapp"
+            android:name=".data.MoviesProvider"
+            android:exported="false"/>
+
+        <service android:name=".sync.MovieSyncIntentService"
+            android:exported="false"/>
     </application>
 
 </manifest>

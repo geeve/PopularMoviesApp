@@ -23,6 +23,8 @@ public class Movie {
     private String mMovieDate;
     //用户评分
     private String mMovieVote;
+    //时长
+    private String mMovieRuntime;
 
     public Movie(String name,String movieId){
 
@@ -72,5 +74,13 @@ public class Movie {
 
     public void setmMovieVote(String mMovieVote) {
         this.mMovieVote = mMovieVote;
+    }
+
+    public String getmMovieRuntime() {
+        return mMovieRuntime;
+    }
+
+    public void setmMovieRuntime(String mMovieRuntime) {
+        this.mMovieRuntime = mMovieRuntime;
     }
 }

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.text.TextUtils;
 
-import com.example.android.popularmoviesapp.data.MovieContract;
 import com.example.android.popularmoviesapp.utilities.NetWorkUtils;
 import com.example.android.popularmoviesapp.utilities.OpenMovieJsonUtils;
 
@@ -13,39 +12,41 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
-import static com.example.android.popularmoviesapp.utilities.OpenMovieJsonUtils.getMoiveContentValuesFromJson;
-
 /**
- * Created by Administrator on 2017/8/13 0013.
+ * Created by Administrator on 2017/10/22 0022.
  * com.example.android.popularmoviesapp,PopularMoviesApp
  */
 
-public class MovieDetailAsyncTaskLoader extends AsyncTaskLoader<Movie> {
+public class ReviewsAsyncTaskLoader extends AsyncTaskLoader<ContentValues[]> {
+
     private String mUrl;
+
     private Context mContext;
 
-    public MovieDetailAsyncTaskLoader(Context context,String url) {
+    public ReviewsAsyncTaskLoader(Context context,String url) {
         super(context);
+
+        this.mContext = context;
         this.mUrl = url;
-        this.mContext  = context;
     }
 
     @Override
-    public Movie loadInBackground() {
-
+    public ContentValues[] loadInBackground() {
         if(TextUtils.isEmpty(mUrl)){
             return null;
         }
-        Movie movie = null;
+        ContentValues[] contentValues = null;
         try {
             String jsonResponse = NetWorkUtils.makeHttpRequest(NetWorkUtils.createUrl(mUrl));
 
-            movie = OpenMovieJsonUtils.extractMovieFromJson(jsonResponse);
+            contentValues = OpenMovieJsonUtils.getMovieReviewsFromJson(jsonResponse);
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
-        return movie;
+        return contentValues;
     }
 }
