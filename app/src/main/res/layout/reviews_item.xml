@@ -3,18 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/review_author"
         tools:text="Author"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textStyle="italic"
+        android:layout_marginLeft="16dp"
+        android:gravity="top"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content" />
     <TextView
         android:id="@+id/review_content"
+        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        tools:text="Goode  Test!"
+        android:paddingLeft="2dp"
+        android:layout_marginRight="16dp"
         android:layout_width="0dp"
-        android:layout_weight="6"
+        android:layout_weight="5"
         android:layout_height="wrap_content" />
+
 
 </LinearLayout>

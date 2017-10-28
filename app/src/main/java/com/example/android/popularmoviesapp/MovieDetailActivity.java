@@ -2,16 +2,20 @@ package com.example.android.popularmoviesapp;
 
 import android.content.Intent;
 
+import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 
 
+import android.support.v4.view.MenuCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.ActionProvider;
+import android.support.v4.view.ActionProvider;
 
 import android.util.Log;
 import android.view.Menu;
 
+import android.view.MenuItem;
 import android.widget.ShareActionProvider;
 
 
@@ -30,6 +34,8 @@ public class MovieDetailActivity extends AppCompatActivity{
     private MoviePrimaryInforFragment mMoviePrimaryInforFragment;
 
     private MovieReviewsFragment mMovieReviewsFragment;
+
+    private MovieVideosFragment mMovieVideosFrgment;
 
     private ShareActionProvider mShareActionProvider;
 
@@ -57,28 +63,19 @@ public class MovieDetailActivity extends AppCompatActivity{
                 .add(R.id.fragment_primary,mMoviePrimaryInforFragment)
                 .commit();
 
-        String url = NetWorkUtils.BASE_REQUEST_URL + "/" + mMovieId + "/reviews" + "?" +NetWorkUtils.API_KEY_PARM + "="+NetWorkUtils.API_KEY_VALUE;
-        mMovieReviewsFragment = MovieReviewsFragment.newInstance(url);
+        String urlReview = NetWorkUtils.BASE_REQUEST_URL + "/" + mMovieId + "/reviews?" +NetWorkUtils.API_KEY_PARM + "="+NetWorkUtils.API_KEY_VALUE;
+        mMovieReviewsFragment = MovieReviewsFragment.newInstance(urlReview);
         fragmentManager.beginTransaction()
                 .add(R.id.frgment_reviews,mMovieReviewsFragment)
                 .commit();
+
+        String urlVideo = NetWorkUtils.BASE_REQUEST_URL + "/" + mMovieId + "/videos?" + NetWorkUtils.API_KEY_PARM + "="+NetWorkUtils.API_KEY_VALUE;
+        mMovieVideosFrgment = MovieVideosFragment.newInstance(urlVideo);
+        fragmentManager.beginTransaction()
+                .add(R.id.fragment_videos,mMovieVideosFrgment)
+                .commit();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_share,menu);
-//        mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.menu_item_share).getActionProvider();
-//        mShareActionProvider.setShareIntent(getShareIntent());
-//        mShareActionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
-        return true;
-    }
-    private Intent getShareIntent(){
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_TEXT,mUrl);
-        intent.setType("text/plain");
-        return intent;
-    }
     /**
      * 获得Intent中传过来的参数
      */

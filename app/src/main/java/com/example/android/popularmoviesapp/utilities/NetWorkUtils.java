@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.example.android.popularmoviesapp.Contract;
 import com.example.android.popularmoviesapp.data.MoviePreferences;
 
 import java.io.BufferedReader;
@@ -28,7 +27,7 @@ public final class NetWorkUtils {
     public static final String BASE_REQUEST_URL="https://api.themoviedb.org/3/movie";
 
     //The movieDb API KEY,You must use your key!
-    public static final String API_KEY_VALUE = "e7c9406aaf1b4404ff405ad51f971cba";
+    public static final String API_KEY_VALUE = "";
 
     public static final String API_KEY_PARM = "api_key";
 
@@ -38,6 +37,8 @@ public final class NetWorkUtils {
 
     //there have “w92”、“w154”、“w185”、“w342”、“w500”、“w780” 或“original” size of picture
     public static final String IMAG_REQUEST_URL="https://image.tmdb.org/t/p/w500";
+
+    public static final String VIDEO_PATH = "https://www.youtube.com/watch?v=";
 
 
     /***

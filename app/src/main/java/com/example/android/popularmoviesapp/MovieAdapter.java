@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.popularmoviesapp.data.MovieContract;
+import com.example.android.popularmoviesapp.data.MoviePreferences;
 import com.example.android.popularmoviesapp.utilities.NetWorkUtils;
 import com.squareup.picasso.Picasso;
 
@@ -27,7 +28,6 @@ import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
  * com.example.android.popularmoviesapp,PopularMoviesApp
  */
 
-//TODO:修改adapter来接收Cursor
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoiveViewHolder> {
 
@@ -54,10 +54,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoiveViewHol
 
     @Override
     public void onBindViewHolder(MoiveViewHolder holder, int position) {
+
         mCursor.moveToPosition(position);
 
         Picasso.with(mContext).load(NetWorkUtils.IMAG_REQUEST_URL + mCursor.getString(mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER))).into(holder.moivePic);
         holder.moiveId.setText(mCursor.getString(mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID)));
+
     }
 
     @Override

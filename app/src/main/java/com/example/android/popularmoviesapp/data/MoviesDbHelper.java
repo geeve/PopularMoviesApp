@@ -45,7 +45,7 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
                         MovieContract.MovieEntry.COLUMN_PUBLISH_DATE + " TEXT," +
                         MovieContract.MovieEntry.COLUMN_VOTE + " TEXT," +
                         MovieContract.MovieEntry.COLUMN_MOVIE_SIZE + " INTEGER," +
-                        MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE + " BOOLEAN);";
+                        MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE + " INTEGER);";
 
         /*
          * After we've spelled out our SQLite table creation statement above, we actually execute

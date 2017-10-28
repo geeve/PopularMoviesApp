@@ -14,5 +14,7 @@
     <item android:id="@+id/sort_rate"
         android:title="Sort By Top Rate"
         app:showAsAction = "never"/>
-
+    <item android:id="@+id/sort_favorite"
+        android:title="Sort By Favorite"
+        app:showAsAction = "never"/>
 </menu>

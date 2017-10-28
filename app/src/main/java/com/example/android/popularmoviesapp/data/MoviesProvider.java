@@ -89,9 +89,9 @@ public class MoviesProvider extends ContentProvider {
         switch (match){
             case CODE_MOVIE:
                 cursor = db.query(MovieContract.MovieEntry.TABLE_NAME,
-                        null,
-                        null,
-                        null,
+                        strings,
+                        s,
+                        strings1,
                         null,
                         null,
                         s1);
@@ -100,7 +100,7 @@ public class MoviesProvider extends ContentProvider {
                 String[] selectionArg = new String[]{uri.getLastPathSegment().toString()};
                 cursor = db.query(MovieContract.MovieEntry.TABLE_NAME,
                         strings,
-                        MovieContract.MovieEntry._ID + "=?",
+                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
                         selectionArg,
                         null,
                         null,
@@ -158,6 +158,25 @@ public class MoviesProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues contentValues, String s, String[] strings) {
-        return 0;
+        int numRowsUpdate = 0;
+        int match = sUriMatcher.match(uri);
+        SQLiteDatabase db = mMoviesDbHelper.getWritableDatabase();
+        switch (match){
+            case CODE_MOVIE:
+            case CODE_MOVIE_WITH_ID:
+                numRowsUpdate = db.update(
+                        MovieContract.MovieEntry.TABLE_NAME,
+                        contentValues,
+                        s,
+                        strings
+                );
+                break;
+            default:
+                throw new UnsupportedOperationException("Unkown uri:"+uri);
+        }
+        if(numRowsUpdate != 0){
+            getContext().getContentResolver().notifyChange(uri,null);
+        }
+        return numRowsUpdate;
     }
 }

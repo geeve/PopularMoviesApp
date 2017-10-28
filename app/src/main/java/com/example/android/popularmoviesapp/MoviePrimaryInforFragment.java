@@ -1,5 +1,8 @@
 package com.example.android.popularmoviesapp;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,10 +11,13 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.popularmoviesapp.data.MovieContract;
 import com.squareup.picasso.Picasso;
+
 
 /**
  * Created by Administrator on 2017/10/23 0023.
@@ -35,19 +41,10 @@ public class MoviePrimaryInforFragment extends Fragment implements LoaderManager
 
     private Movie mMovie;
 
-    public MoviePrimaryInforFragment() {
-        super();
+    private Button btnFavorite;
 
-    }
-
-    public static MoviePrimaryInforFragment newInstance(String url){
-        MoviePrimaryInforFragment moviePrimaryInforFragment = new MoviePrimaryInforFragment();
-        Bundle b =  new Bundle();
-        b.putString("url",url);
-        moviePrimaryInforFragment.setArguments(b);
-        mUrl = url;
-        return moviePrimaryInforFragment;
-    }
+    //保存本电影是否被收藏了
+    private boolean mIsFavorite;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,12 +61,43 @@ public class MoviePrimaryInforFragment extends Fragment implements LoaderManager
         tvMovieVote = (TextView)rootView.findViewById(R.id.detail_vote_averge);
         ivMoviePoster = (ImageView) rootView.findViewById(R.id.detail_movie_poster);
         tvMovieRuntime = (TextView) rootView.findViewById(R.id.detail_movie_runtime);
-//        this.mUrl = getArguments().getString("url");
-//        Bundle b = getArguments();
-//        this.mUrl = b.getString("url");
-        //this.mUrl = getActivity().getIntent().getStringExtra("url");
+        btnFavorite = (Button) rootView.findViewById(R.id.btn_make_favorite);
+
         return rootView;
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        btnFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!mIsFavorite){
+                    setMovieFavorite(mMovie.getmMovieId(),true);
+                    setViews(mMovie);
+                }else {
+                    setMovieFavorite(mMovie.getmMovieId(),false);
+                    setViews(mMovie);
+                }
+            }
+        });
+        getActivity().getSupportLoaderManager().initLoader(4,null,this).forceLoad();
+    }
+
+    public MoviePrimaryInforFragment() {
+        super();
+
+    }
+
+    public static MoviePrimaryInforFragment newInstance(String url){
+        MoviePrimaryInforFragment moviePrimaryInforFragment = new MoviePrimaryInforFragment();
+        Bundle b =  new Bundle();
+        b.putString("url",url);
+        moviePrimaryInforFragment.setArguments(b);
+        mUrl = url;
+        return moviePrimaryInforFragment;
+    }
+
 
     private void setViews(Movie movie){
         tvMovieVote.setText(movie.getmMovieVote());
@@ -77,15 +105,65 @@ public class MoviePrimaryInforFragment extends Fragment implements LoaderManager
         tvMovieDate.setText(movie.getmMovieDate());
         tvMovieRuntime.setText(movie.getmMovieRuntime()+ "min");
         Picasso.with(getContext()).load(movie.getmMoviePoster()).into(ivMoviePoster);
+        if(mIsFavorite){
+            btnFavorite.setText("HAS FAVORITE");
+            btnFavorite.setBackgroundColor(getResources().getColor(R.color.colorDeli));
+        }else{
+            btnFavorite.setText("MAKE AS FAVORITE");
+            btnFavorite.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        }
 
     }
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
-        getActivity().getSupportLoaderManager().initLoader(4,null,this).forceLoad();
+    /***
+     * 根据电影ID 查询是否被收藏
+     * @param movieId
+     * @return true：被收藏，false：未收藏
+     */
+    private boolean isMovieFavorite(String movieId){
+        String[] projection = {MovieContract.MovieEntry.COLUMN_MOVIE_ID, MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE};
+        String[] selectionArgs = {movieId};
+        Uri uri = Uri.withAppendedPath(MovieContract.MovieEntry.CONTENT_URI,movieId);
+        Cursor cursor = getContext().getContentResolver().query(
+                uri,
+                projection,
+                MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
+                selectionArgs,
+                null
+        );
+
+        cursor.moveToFirst();
+        int i = cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE));
+        cursor.close();
+        if(i == 0){
+            return false;
+        }else {
+            return true;
+        }
     }
 
+    /***
+     * 设置电影IP为movieId的收藏为true
+     * @param movieId
+     * @param b
+     */
+    private void setMovieFavorite(String movieId,boolean b){
+        ContentValues contentValues = new ContentValues();
+        int v = 0;
+        if(b){
+            v = 1;
+        }else {
+            v = 0;
+        }
+        contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE,v);
+        int num = getContext().getContentResolver().update(
+                MovieContract.MovieEntry.CONTENT_URI,
+                contentValues,
+                MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
+                new String[] {movieId}
+        );
+        mIsFavorite = b;
+    }
     @Override
     public Loader<Movie> onCreateLoader(int id, Bundle args) {
 
@@ -95,6 +173,11 @@ public class MoviePrimaryInforFragment extends Fragment implements LoaderManager
     @Override
     public void onLoadFinished(Loader<Movie> loader, Movie data) {
         mMovie = data;
+        if(isMovieFavorite(mMovie.getmMovieId())){
+            mIsFavorite = true;
+        }else{
+            mIsFavorite = false;
+        }
         setViews(mMovie);
 
     }

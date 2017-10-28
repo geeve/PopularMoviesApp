@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_movie_detail"
     android:layout_width="match_parent"
@@ -11,17 +12,37 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
         <FrameLayout
             android:id="@+id/fragment_primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scaleType="centerInside" />
+            android:scaleType="centerInside"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="8dp" />
+
+        <FrameLayout
+            android:id="@+id/fragment_videos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/frgment_reviews"
+            app:layout_constraintRight_toRightOf="@+id/frgment_reviews"
+            app:layout_constraintLeft_toLeftOf="@+id/frgment_reviews"
+            android:layout_marginTop="8dp" />
 
         <FrameLayout
             android:id="@+id/frgment_reviews"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scaleType="centerInside" />
+            android:scaleType="centerInside"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_primary"
+            app:layout_constraintLeft_toLeftOf="@+id/fragment_primary"
+            app:layout_constraintRight_toRightOf="@+id/fragment_primary" />
     </LinearLayout>
 </ScrollView>

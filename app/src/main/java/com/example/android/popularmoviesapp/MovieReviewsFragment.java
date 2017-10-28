@@ -51,7 +51,7 @@ public class MovieReviewsFragment extends Fragment implements LoaderManager.Load
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mReviewsAdapter);
         mRecyclerView.setHasFixedSize(true);
-        getLoaderManager().initLoader(REVIEW_ASYNC_CODE,null,this).forceLoad();
+
         return rootView;
     }
 
@@ -59,7 +59,7 @@ public class MovieReviewsFragment extends Fragment implements LoaderManager.Load
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
         super.onActivityCreated(savedInstanceState);
-
+        getLoaderManager().initLoader(REVIEW_ASYNC_CODE,null,this).forceLoad();
     }
 
     @Override

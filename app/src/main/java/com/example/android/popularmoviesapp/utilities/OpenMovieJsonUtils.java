@@ -4,13 +4,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.example.android.popularmoviesapp.Contract;
 import com.example.android.popularmoviesapp.Movie;
 import com.example.android.popularmoviesapp.data.MovieContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 
 /**
  * Created by Administrator on 2017/10/20 0020.
@@ -38,6 +39,10 @@ public final class OpenMovieJsonUtils {
     public static final String JSON_REVIEW_AUTHOR = "author";
 
     public static final String JSON_REVIEW_CONTENT = "content";
+
+    public static final String JSON_VIDEO_NAME = "name";
+
+    public static final String JSON_VIDEO_KEY = "key";
 
     /**
      * This method parses JSON from a web response and returns an array of Strings
@@ -86,6 +91,34 @@ public final class OpenMovieJsonUtils {
         }
 
         return movieContentValues;
+    }
+
+    public static ContentValues[] getMovieVideosFromJson(String jsonResponse) throws JSONException{
+        if(TextUtils.isEmpty(jsonResponse)){
+            return  null;
+        }
+
+        JSONObject baseVideoJson = new JSONObject(jsonResponse);
+        JSONArray itemJsonArray = baseVideoJson.getJSONArray(JSON_RESULTS);
+
+        ContentValues[] videosValues = new ContentValues[itemJsonArray.length()];
+        if(itemJsonArray.length()>0){
+            for(int i = 0;i<itemJsonArray.length();i++){
+                JSONObject item = itemJsonArray.getJSONObject(i);
+
+                String videoName = item.getString(JSON_VIDEO_NAME);
+                String videoKey = item.getString(JSON_VIDEO_KEY);
+
+                ContentValues contentValues = new ContentValues();
+
+                contentValues.put(JSON_VIDEO_NAME,videoName);
+                contentValues.put(JSON_VIDEO_KEY,videoKey);
+
+                videosValues[i] = contentValues;
+            }
+        }
+
+        return videosValues;
     }
 
     public static ContentValues[] getMovieReviewsFromJson(String jsonResponse) throws JSONException{

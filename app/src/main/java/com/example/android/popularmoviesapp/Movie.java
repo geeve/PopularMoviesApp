@@ -2,6 +2,8 @@ package com.example.android.popularmoviesapp;
 
 import android.net.Uri;
 
+import com.example.android.popularmoviesapp.utilities.NetWorkUtils;
+
 /**
  * Created by Administrator on 2017/8/13 0013.
  * com.example.android.popularmoviesapp,PopularMoviesApp
@@ -26,6 +28,7 @@ public class Movie {
     //时长
     private String mMovieRuntime;
 
+
     public Movie(String name,String movieId){
 
         this.mMovieId = movieId;
@@ -49,7 +52,7 @@ public class Movie {
     //设置海报图片Uri
     public void setmMoviePoster(String mMoviePoster) {
 
-        this.mMoviePoster = Contract.IMAG_REQUEST_URL+"/"+mMoviePoster;
+        this.mMoviePoster = NetWorkUtils.IMAG_REQUEST_URL+"/"+mMoviePoster;
     }
 
     public String getmOverView() {
@@ -83,4 +86,5 @@ public class Movie {
     public void setmMovieRuntime(String mMovieRuntime) {
         this.mMovieRuntime = mMovieRuntime;
     }
+
 }

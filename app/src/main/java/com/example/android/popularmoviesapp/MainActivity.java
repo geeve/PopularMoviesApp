@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 
 import android.support.v7.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,7 +26,10 @@ import android.widget.Toast;
 
 import com.example.android.popularmoviesapp.data.*;
 import com.example.android.popularmoviesapp.sync.MovieSyncUtil;
+import com.example.android.popularmoviesapp.utilities.NetWorkUtils;
 import com.example.android.popularmoviesapp.utilities.OpenMovieJsonUtils;
+
+import static android.R.attr.data;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,MovieAdapter.MovieAdapterOnClickHandler {
 
@@ -40,21 +45,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private boolean mNetWorkStateOk = false;
 
-    public static final String[] MAIN_MOVIE_PROJECTION = {
-            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
-            MovieContract.MovieEntry.COLUMN_NAME,
-            MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE,
-            MovieContract.MovieEntry.COLUMN_VOTE,
-            MovieContract.MovieEntry.COLUMN_MOVIE_SIZE,
-    };
+    private static String INI_STATE = "ini_state";
 
+    private boolean mTwoPanl = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if(savedInstanceState == null) {
+            initView();
+        }
 
-        initView();
-
+        if(findViewById(R.id.two_pane_divide) != null){
+            mTwoPanl = true;
+        }else {
+            mTwoPanl = false;
+        }
     }
 
     @Override
@@ -104,10 +110,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 Toast.makeText(MainActivity.this, R.string.sort_rate_tips,Toast.LENGTH_SHORT).show();
 
                 break;
+            case R.id.sort_favorite:
+                MoviePreferences.setPrefOrderBy(this,MoviePreferences.PREF_ORDER_BY_FARI);
+                break;
             case R.id.refresh:
 
         }
-        MovieSyncUtil.startImmediateSync(this);
+        if(MoviePreferences.getPrefOrderBy(this) != MoviePreferences.PREF_ORDER_BY_FARI) {
+            MovieSyncUtil.startImmediateSync(this);
+        }
         getSupportLoaderManager().restartLoader(1,null,this).forceLoad();
         mNetWorkError.setVisibility(View.GONE);
         return super.onOptionsItemSelected(item);
@@ -132,16 +143,29 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String selection = "";
+        String[] selectionArgs = {"0"};
+
+        if(MoviePreferences.getPrefOrderBy(this) == MoviePreferences.PREF_ORDER_BY_FARI){
+            Log.v("OrderBy:","favorite");
+            selection = MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE + "=1";
+            selectionArgs[0] = "1";
+        }
         return new CursorLoader(this,
                 MovieContract.MovieEntry.CONTENT_URI,
-                MAIN_MOVIE_PROJECTION,
                 null,
+                selection,
                 null,
                 null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        data.moveToFirst();
+        for(int i=0;i<data.getCount();i++){
+            Log.v(data.getString(data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID))+",","f:"+data.getInt(data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE)));
+            data.moveToNext();
+        }
         mMovieAdapter.setMovie(data);
     }
 
@@ -150,14 +174,41 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mMovieAdapter.setMovie(null);
     }
 
-
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(INI_STATE,true);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onClick(String date) {
-        Intent intent = new Intent(MainActivity.this,MovieDetailActivity.class);
+        if(!mTwoPanl) {
+            Intent intent = new Intent(MainActivity.this, MovieDetailActivity.class);
 
-        intent.putExtra(OpenMovieJsonUtils.JSON_ID,date);
+            intent.putExtra(OpenMovieJsonUtils.JSON_ID, date);
 
-        startActivityForResult(intent,REQUEST_CODE);
+            startActivityForResult(intent, REQUEST_CODE);
+
+        }else{
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            String urlPrimary = NetWorkUtils.BASE_REQUEST_URL + "/" + date +"?" +NetWorkUtils.API_KEY_PARM + "="+NetWorkUtils.API_KEY_VALUE;
+            MoviePrimaryInforFragment moviePrimaryInforFragment = MoviePrimaryInforFragment.newInstance(urlPrimary);
+
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_primary,moviePrimaryInforFragment)
+                    .commit();
+
+            String urlReview = NetWorkUtils.BASE_REQUEST_URL + "/" + date + "/reviews?" +NetWorkUtils.API_KEY_PARM + "="+NetWorkUtils.API_KEY_VALUE;
+            MovieReviewsFragment movieReviewsFragment = MovieReviewsFragment.newInstance(urlReview);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.frgment_reviews,movieReviewsFragment)
+                    .commit();
+
+            String urlVideo = NetWorkUtils.BASE_REQUEST_URL + "/" + date + "/videos?" + NetWorkUtils.API_KEY_PARM + "="+NetWorkUtils.API_KEY_VALUE;
+            MovieVideosFragment movieVideosFrgment = MovieVideosFragment.newInstance(urlVideo);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_videos,movieVideosFrgment)
+                    .commit();
+        }
     }
 }
