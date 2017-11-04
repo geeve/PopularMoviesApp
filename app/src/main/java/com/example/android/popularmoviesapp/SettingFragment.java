@@ -42,7 +42,7 @@ public class SettingFragment extends PreferenceFragmentCompat implements SharedP
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Activity activity = getActivity();
 
-        if (sharedPreferences.getInt(key,0) != MoviePreferences.PREF_ORDER_BY_FARI) {
+        if (Integer.valueOf(sharedPreferences.getString(key,"0")) != MoviePreferences.PREF_ORDER_BY_FARI) {
             MovieSyncUtil.startImmediateSync(activity);
         } else{
             activity.getContentResolver().notifyChange(MovieContract.MovieEntry.CONTENT_URI, null);

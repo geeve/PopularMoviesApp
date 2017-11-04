@@ -113,7 +113,7 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
 
         }else{
             mNetWorkError.setVisibility(View.GONE);
-            getActivity().getSupportLoaderManager().restartLoader(1,null,this).forceLoad();
+            getActivity().getSupportLoaderManager().restartLoader(REQUEST_CODE,null,this).forceLoad();
         }
 
         if(getActivity().findViewById(R.id.two_pane_divide) != null){

@@ -130,7 +130,7 @@ public final class NetWorkUtils {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         String requestUrl = BASE_REQUEST_URL;
 
-        int orderBy = sp.getInt(MoviePreferences.PREF_ORDER_BY,0);
+        int orderBy = Integer.valueOf(sp.getString(MoviePreferences.PREF_ORDER_BY,"0"));
         switch (orderBy){
             case MoviePreferences.PREF_ORDER_BY_POP:
                 requestUrl += ORDER_POPULAR;

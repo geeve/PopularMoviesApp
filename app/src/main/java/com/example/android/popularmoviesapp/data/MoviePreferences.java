@@ -12,7 +12,7 @@ import android.preference.PreferenceManager;
 
 public final class MoviePreferences {
 
-    /*区分电影列表排序方式，0为按受欢迎程度排序，1为按评分，2为按收藏排序*/
+    /**区分电影列表排序方式，0为按受欢迎程度排序，1为按评分，2为按收藏排序*/
     public static final String PREF_ORDER_BY = "order_by";
 
     public static final int PREF_ORDER_BY_POP = 0;
@@ -30,16 +30,16 @@ public final class MoviePreferences {
 
         switch (orderBy){
             case PREF_ORDER_BY_POP:
-                editor.putInt(PREF_ORDER_BY,PREF_ORDER_BY_POP);
+                editor.putString(PREF_ORDER_BY,String.valueOf(PREF_ORDER_BY_POP));
                 break;
             case PREF_ORDER_BY_VOTE:
-                editor.putInt(PREF_ORDER_BY,PREF_ORDER_BY_VOTE);
+                editor.putString(PREF_ORDER_BY,String.valueOf(PREF_ORDER_BY_VOTE));
                 break;
             case PREF_ORDER_BY_FARI:
-                editor.putInt(PREF_ORDER_BY,PREF_ORDER_BY_FARI);
+                editor.putString(PREF_ORDER_BY,String.valueOf(PREF_ORDER_BY_FARI));
                 break;
             default:
-                editor.putInt(PREF_ORDER_BY,PREF_ORDER_BY_POP);
+                editor.putString(PREF_ORDER_BY,String.valueOf(PREF_ORDER_BY_POP));
         }
 
         editor.apply();
@@ -53,7 +53,7 @@ public final class MoviePreferences {
     public static int getPrefOrderBy(Context context){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
-        return sp.getInt(PREF_ORDER_BY,0);
+        return Integer.valueOf(sp.getString(PREF_ORDER_BY,"0"));
     }
 
 }
