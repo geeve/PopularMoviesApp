@@ -8,4 +8,16 @@
     <string name="vote_rate">Vote Rate:</string>
     <string name="_10">/10</string>
     <string name="overview">OverView</string>
+
+    <string name="pref_movieSort_default">Popular</string>
+    <string-array name="pref_movieSort_options">
+        <item>Popular</item>
+        <item>Top Rate</item>
+        <item>Favorite</item>
+    </string-array>
+    <integer-array name="pref_movieSort_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </integer-array>
 </resources>

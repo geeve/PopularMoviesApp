@@ -3,6 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
+    <item android:id="@+id/setting"
+        android:title="Setting"
+        app:showAsAction = "never"/>
 
     <item android:id="@+id/refresh"
         android:title="Refresh"
@@ -10,11 +13,11 @@
 
     <item android:id="@+id/sort_pop"
         android:title="Sort By Popular"
-        app:showAsAction = "never"/>
+        app:showAsAction = "never" />
     <item android:id="@+id/sort_rate"
         android:title="Sort By Top Rate"
-        app:showAsAction = "never"/>
+        app:showAsAction = "never" />
     <item android:id="@+id/sort_favorite"
         android:title="Sort By Favorite"
-        app:showAsAction = "never"/>
+        app:showAsAction = "never" />
 </menu>

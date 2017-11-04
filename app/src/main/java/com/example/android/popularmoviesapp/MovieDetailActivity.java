@@ -2,29 +2,32 @@ package com.example.android.popularmoviesapp;
 
 import android.content.Intent;
 
-import android.net.Uri;
+
 import android.support.v4.app.FragmentManager;
 
 
-import android.support.v4.view.MenuCompat;
+
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v4.view.ActionProvider;
 
+
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 
 import android.view.MenuItem;
-import android.widget.ShareActionProvider;
+
 
 
 import com.example.android.popularmoviesapp.utilities.NetWorkUtils;
 import com.example.android.popularmoviesapp.utilities.OpenMovieJsonUtils;
 
 
-
-
+/***
+ * @author geeve@126.com
+ */
 public class MovieDetailActivity extends AppCompatActivity{
 
     private String mMovieId;
@@ -39,6 +42,8 @@ public class MovieDetailActivity extends AppCompatActivity{
 
     private ShareActionProvider mShareActionProvider;
 
+    private String mVideoUrlShare;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +52,29 @@ public class MovieDetailActivity extends AppCompatActivity{
         getIntentParam();
 
         initView();
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_share,menu);
+        MenuItem menuItem = menu.findItem(R.id.menu_item_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
+        if(!TextUtils.isEmpty(mVideoUrlShare)) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, mVideoUrlShare);
+            intent.setType("text/plain");
+            Intent.createChooser(intent, "Share Links");
+            setShareIntent(intent);
+        }
+        return true;
+    }
+
+    private void setShareIntent(Intent shareIntent) {
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
     }
 
     @Override
@@ -74,6 +102,8 @@ public class MovieDetailActivity extends AppCompatActivity{
         fragmentManager.beginTransaction()
                 .add(R.id.fragment_videos,mMovieVideosFrgment)
                 .commit();
+
+        mVideoUrlShare = mMovieVideosFrgment.getVideoUrl();
     }
 
     /**

@@ -19,7 +19,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".MovieDetailActivity"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".SettingActivity"
+            android:label="Setting"/>
         <provider
             android:authorities="com.example.android.popularmoviesapp"
             android:name=".data.MoviesProvider"

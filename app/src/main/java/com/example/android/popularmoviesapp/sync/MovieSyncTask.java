@@ -3,6 +3,7 @@ package com.example.android.popularmoviesapp.sync;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.util.Log;
 
 import com.example.android.popularmoviesapp.data.MovieContract;
 import com.example.android.popularmoviesapp.utilities.NetWorkUtils;
@@ -27,10 +28,10 @@ public class MovieSyncTask {
             if(contentValues != null && contentValues.length != 0){
                 ContentResolver movieContentResolver = context.getContentResolver();
 
-                movieContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI,
-                        null,
+                int numDel = movieContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI,
+                        MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE + "=0",
                         null);
-
+                Log.v("deleted num:"," "+numDel);
                 movieContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI,contentValues);
 
             }

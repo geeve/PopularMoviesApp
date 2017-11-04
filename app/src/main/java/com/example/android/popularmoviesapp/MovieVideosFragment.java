@@ -12,6 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android.popularmoviesapp.utilities.NetWorkUtils;
+import com.example.android.popularmoviesapp.utilities.OpenMovieJsonUtils;
+
 /**
  * Created by Administrator on 2017/10/26 0026.
  * com.example.android.popularmoviesapp,PopularMoviesApp
@@ -20,6 +23,7 @@ import android.view.ViewGroup;
 public class MovieVideosFragment extends Fragment implements LoaderManager.LoaderCallbacks<ContentValues[]>{
     private static String mUrl;
 
+    public static String videoUrl;
     private RecyclerView mRecyclerView;
 
     private VideosAdapter mAdapter;
@@ -35,6 +39,9 @@ public class MovieVideosFragment extends Fragment implements LoaderManager.Loade
         return movieVideosFragment;
     }
 
+    public String getVideoUrl(){
+        return videoUrl;
+    }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -62,6 +69,9 @@ public class MovieVideosFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<ContentValues[]> loader, ContentValues[] data) {
+        if(data.length > 0) {
+            videoUrl = NetWorkUtils.VIDEO_PATH + data[0].getAsString(OpenMovieJsonUtils.JSON_VIDEO_KEY);
+        }
         mAdapter.swapData(data);
     }
 

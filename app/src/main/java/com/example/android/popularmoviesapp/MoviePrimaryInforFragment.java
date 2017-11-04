@@ -72,6 +72,9 @@ public class MoviePrimaryInforFragment extends Fragment implements LoaderManager
         btnFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(mMovie == null){
+                    return;
+                }
                 if(!mIsFavorite){
                     setMovieFavorite(mMovie.getmMovieId(),true);
                     setViews(mMovie);
@@ -112,7 +115,6 @@ public class MoviePrimaryInforFragment extends Fragment implements LoaderManager
             btnFavorite.setText("MAKE AS FAVORITE");
             btnFavorite.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         }
-
     }
 
     /***

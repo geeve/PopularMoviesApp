@@ -14,13 +14,13 @@ import static android.R.attr.version;
  */
 
 public class MoviesDbHelper extends SQLiteOpenHelper {
-    /*
+    /**
      * This is the name of our database. Database names should be descriptive and end with the
      * .db extension.
      */
     public static final String DATABASE_NAME = "movies.db";
 
-    /*The version of the database*/
+    /**The version of the database*/
     public static final int DATABASE_VERSION = 1;
 
 
@@ -45,7 +45,8 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
                         MovieContract.MovieEntry.COLUMN_PUBLISH_DATE + " TEXT," +
                         MovieContract.MovieEntry.COLUMN_VOTE + " TEXT," +
                         MovieContract.MovieEntry.COLUMN_MOVIE_SIZE + " INTEGER," +
-                        MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE + " INTEGER);";
+                        MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE + " INTEGER,"+
+                        MovieContract.MovieEntry.COLUMN_MOVIE_SORT_TYPE + " TEXT);";
 
         /*
          * After we've spelled out our SQLite table creation statement above, we actually execute

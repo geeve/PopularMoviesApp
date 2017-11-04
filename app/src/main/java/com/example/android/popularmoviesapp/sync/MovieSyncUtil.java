@@ -18,7 +18,9 @@ public class MovieSyncUtil {
     private static boolean sInitialized;
 
     synchronized public static void initialize(@NonNull final Context context){
-        if(sInitialized) return;
+        if(sInitialized){
+            return;
+        }
 
         sInitialized = true;
 

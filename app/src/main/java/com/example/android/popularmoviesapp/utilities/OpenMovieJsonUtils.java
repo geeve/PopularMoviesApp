@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.example.android.popularmoviesapp.Movie;
 import com.example.android.popularmoviesapp.data.MovieContract;
+import com.example.android.popularmoviesapp.data.MoviePreferences;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,6 +86,8 @@ public final class OpenMovieJsonUtils {
                 contentValues.put(MovieContract.MovieEntry.COLUMN_PUBLISH_DATE,movieDate);
                 contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW,movieOverview);
                 contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE,movieVote);
+                contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE,0);
+                contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_SORT_TYPE, MoviePreferences.getPrefOrderBy(context));
 
                 movieContentValues[i] = contentValues;
             }

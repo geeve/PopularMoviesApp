@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
+import com.example.android.popularmoviesapp.utilities.NetWorkUtils;
+import com.example.android.popularmoviesapp.utilities.OpenMovieJsonUtils;
+
 /**
  * Created by Administrator on 2017/9/4 0004.
  * com.example.android.popularmoviesapp.data,PopularMoviesApp
@@ -57,8 +60,27 @@ public class MoviesProvider extends ContentProvider {
                 try{
 
                     for(ContentValues value : values){
-                        long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME,null,value);
-
+                        //如果数据已存在就进行更新操作，并保留 COLUMN_MOVIE_FAVORITE 的值
+                        String movieId = value.getAsString(MovieContract.MovieEntry.COLUMN_MOVIE_ID);
+                        Cursor cursor = db.query(MovieContract.MovieEntry.TABLE_NAME,
+                                null,
+                                MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
+                                new String[]{movieId},
+                                null,
+                                null,
+                                null);
+                        long _id;
+                        if(cursor != null && cursor.getCount() > 0){
+                            cursor.moveToFirst();
+                            value.remove(MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE);
+                            value.put(MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE,cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE)));
+                            _id = db.update(MovieContract.MovieEntry.TABLE_NAME,
+                                    value,
+                                    MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
+                                    new String[]{movieId});
+                        }else {
+                            _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
+                        }
                         if(_id != -1){
                             rowInserted ++;
                         }
@@ -135,7 +157,9 @@ public class MoviesProvider extends ContentProvider {
          * passing "1" for the selection will delete all rows and return the number of rows
          * deleted, which is what the caller of this method expects.
          */
-        if(null == s) s = "1";
+        if(null == s){
+            s = "1";
+        }
 
         switch (sUriMatcher.match(uri)){
             case CODE_MOVIE:
