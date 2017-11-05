@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.icu.util.GregorianCalendar;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -51,6 +52,9 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
 
     private boolean mTwoPanl = false;
 
+    private int mPrePosition;
+    private static final String PRE_POSITION = "pre_position";
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +92,7 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
             mRecyclerView.setLayoutManager(gridLayoutManager);
         }
 
+
         return viewRoot;
     }
 
@@ -101,8 +106,11 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
         }else {
             MovieSyncUtil.startImmediateSync(getContext());
             getActivity().getSupportLoaderManager().restartLoader(REQUEST_CODE,null,this);
+            mPrePosition = savedInstanceState.getInt(PRE_POSITION,1);
+            Log.v("restore position",":"+mPrePosition);
         }
     }
+
 
     @Override
     public void onStart() {
@@ -121,6 +129,7 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
         }else {
             mTwoPanl = false;
         }
+
     }
     /**
      * 判断网络连接是否存在
@@ -179,7 +188,12 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
     public void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(INI_STATE,true);
         super.onSaveInstanceState(outState);
+        GridLayoutManager gm = (GridLayoutManager)mRecyclerView.getLayoutManager();
+        mPrePosition = gm.findFirstVisibleItemPosition();
+        Log.v("save postion",":"+mPrePosition);
+        outState.putInt(PRE_POSITION,mPrePosition);
     }
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -205,6 +219,8 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         data.moveToFirst();
         mMovieAdapter.setMovie(data);
+        Log.v("Load position:"," "+mPrePosition);
+        mRecyclerView.smoothScrollToPosition(mPrePosition);
     }
 
     @Override

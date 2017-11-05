@@ -38,6 +38,7 @@ import com.example.android.popularmoviesapp.utilities.OpenMovieJsonUtils;
  */
 public class MainActivity extends AppCompatActivity {
 
+    private RecyclerView mRv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         MovieListFragment movieListFragment = MovieListFragment.newInstance();
 
         fm.beginTransaction()
-                .add(R.id.activity_main,movieListFragment)
+                .replace(R.id.activity_main,movieListFragment)
                 .commit();
     }
 
