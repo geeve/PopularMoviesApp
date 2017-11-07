@@ -52,7 +52,7 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
 
     private boolean mTwoPanl = false;
 
-    private int mPrePosition;
+    private static int mPrePosition;
     private static final String PRE_POSITION = "pre_position";
 
     @Override
@@ -87,6 +87,7 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
         if(ori == Configuration.ORIENTATION_LANDSCAPE){
             GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),3);
             mRecyclerView.setLayoutManager(gridLayoutManager);
+            Log.v("Device is ","LANDDSCAPE");
         }else if(ori == Configuration.ORIENTATION_PORTRAIT){
             GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),2);
             mRecyclerView.setLayoutManager(gridLayoutManager);
@@ -104,10 +105,13 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
             MovieSyncUtil.initialize(getContext());
             getActivity().getSupportLoaderManager().initLoader(REQUEST_CODE, null, this).forceLoad();
         }else {
-            MovieSyncUtil.startImmediateSync(getContext());
-            getActivity().getSupportLoaderManager().restartLoader(REQUEST_CODE,null,this);
             mPrePosition = savedInstanceState.getInt(PRE_POSITION,1);
             Log.v("restore position",":"+mPrePosition);
+            Bundle b = new Bundle();
+            b.putInt(PRE_POSITION,mPrePosition);
+            MovieSyncUtil.startImmediateSync(getContext());
+            getActivity().getSupportLoaderManager().restartLoader(REQUEST_CODE,b,this);
+
         }
     }
 
@@ -199,6 +203,10 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String selection;
 
+        if(args != null){
+            mPrePosition = args.getInt(PRE_POSITION,0);
+            Log.v("Loader Create:"," "+mPrePosition);
+        }
         if(MoviePreferences.getPrefOrderBy(getContext()) == MoviePreferences.PREF_ORDER_BY_FARI){
             Log.v("OrderBy:","favorite");
             selection = MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE + "=1";

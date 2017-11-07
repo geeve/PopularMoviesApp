@@ -56,6 +56,15 @@ public class MovieDetailActivity extends AppCompatActivity{
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_share,menu);
         MenuItem menuItem = menu.findItem(R.id.menu_item_share);
