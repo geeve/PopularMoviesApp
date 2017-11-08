@@ -77,7 +77,9 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
                     Uri uri = Uri.parse(url);
                     Log.v("Video Url:",url);
                     Intent intent = new Intent(Intent.ACTION_VIEW,uri);
-                    mContext.startActivity(intent);
+                    if(intent.resolveActivity(mContext.getPackageManager()) != null) {
+                        mContext.startActivity(intent);
+                    }
                 }
             });
         }

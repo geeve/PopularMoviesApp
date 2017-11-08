@@ -125,7 +125,7 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
 
         }else{
             mNetWorkError.setVisibility(View.GONE);
-            getActivity().getSupportLoaderManager().restartLoader(REQUEST_CODE,null,this).forceLoad();
+//            getActivity().getSupportLoaderManager().restartLoader(REQUEST_CODE,null,this).forceLoad();
         }
 
         if(getActivity().findViewById(R.id.two_pane_divide) != null){
@@ -183,6 +183,7 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
         if(MoviePreferences.getPrefOrderBy(getContext()) != MoviePreferences.PREF_ORDER_BY_FARI) {
             MovieSyncUtil.startImmediateSync(getContext());
         }
+
         getActivity().getSupportLoaderManager().restartLoader(REQUEST_CODE,null,this).forceLoad();
         mNetWorkError.setVisibility(View.GONE);
         return super.onOptionsItemSelected(item);
@@ -209,7 +210,7 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
         }
         if(MoviePreferences.getPrefOrderBy(getContext()) == MoviePreferences.PREF_ORDER_BY_FARI){
             Log.v("OrderBy:","favorite");
-            selection = MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE + "=1";
+            selection = MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE + "=1 and "+ MovieContract.MovieEntry.COLUMN_MOVIE_SORT_TYPE + "=2";
         }else if(MoviePreferences.getPrefOrderBy(getContext()) == MoviePreferences.PREF_ORDER_BY_POP){
             selection = MovieContract.MovieEntry.COLUMN_MOVIE_SORT_TYPE + "=0";
         }else {
@@ -228,7 +229,9 @@ public class MovieListFragment extends Fragment  implements LoaderManager.Loader
         data.moveToFirst();
         mMovieAdapter.setMovie(data);
         Log.v("Load position:"," "+mPrePosition);
-        mRecyclerView.smoothScrollToPosition(mPrePosition);
+        if(mPrePosition >= 0) {
+            mRecyclerView.smoothScrollToPosition(mPrePosition);
+        }
     }
 
     @Override

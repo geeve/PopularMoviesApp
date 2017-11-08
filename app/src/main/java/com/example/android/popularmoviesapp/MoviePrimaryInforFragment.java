@@ -1,5 +1,6 @@
 package com.example.android.popularmoviesapp;
 
+import android.content.AsyncQueryHandler;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
@@ -77,10 +78,10 @@ public class MoviePrimaryInforFragment extends Fragment implements LoaderManager
                 }
                 if(!mIsFavorite){
                     setMovieFavorite(mMovie.getmMovieId(),true);
-                    setViews(mMovie);
+
                 }else {
                     setMovieFavorite(mMovie.getmMovieId(),false);
-                    setViews(mMovie);
+
                 }
             }
         });
@@ -149,7 +150,7 @@ public class MoviePrimaryInforFragment extends Fragment implements LoaderManager
      * @param movieId
      * @param b
      */
-    private void setMovieFavorite(String movieId,boolean b){
+    private void setMovieFavorite(String movieId,final boolean b){
         ContentValues contentValues = new ContentValues();
         int v = 0;
         if(b){
@@ -158,13 +159,30 @@ public class MoviePrimaryInforFragment extends Fragment implements LoaderManager
             v = 0;
         }
         contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE,v);
-        int num = getContext().getContentResolver().update(
+        AsyncQueryHandler asyncQueryHandler = new AsyncQueryHandler(getContext().getContentResolver()) {
+            @Override
+            protected void onUpdateComplete(int token, Object cookie, int result) {
+                super.onUpdateComplete(token, cookie, result);
+                mIsFavorite = b;
+                setViews(mMovie);
+            }
+        };
+        String selection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?";
+        String[] selectionArgs = {movieId};
+
+        asyncQueryHandler.startUpdate(200,
+                null,
                 MovieContract.MovieEntry.CONTENT_URI,
                 contentValues,
-                MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
-                new String[] {movieId}
-        );
-        mIsFavorite = b;
+                selection,
+                selectionArgs);
+//        int num = getContext().getContentResolver().update(
+//                MovieContract.MovieEntry.CONTENT_URI,
+//                contentValues,
+//                MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
+//                new String[] {movieId}
+//        );
+
     }
     @Override
     public Loader<Movie> onCreateLoader(int id, Bundle args) {

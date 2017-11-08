@@ -21,7 +21,7 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "movies.db";
 
     /**The version of the database*/
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
 
     public MoviesDbHelper(Context context) {
@@ -58,7 +58,9 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.MovieEntry.TABLE_NAME);
-        onCreate(sqLiteDatabase);
+        if(i < 2) {
+            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.MovieEntry.TABLE_NAME);
+            onCreate(sqLiteDatabase);
+        }
     }
 }
